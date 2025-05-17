@@ -1,0 +1,8 @@
+---
+# defaults file for devops-tools
+docker_users:
+  - ubuntu
+install_kubectl: false
+install_terraform: false
+install_helm: false
+

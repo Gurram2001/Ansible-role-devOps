@@ -1,0 +1,6 @@
+---
+# handlers file for devops-tools
+- name: Restart Docker
+  systemd:
+    name: docker
+    state: restarted

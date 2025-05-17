@@ -1,0 +1,51 @@
+---
+# tasks file for devops-tools
+- name: Install required essential packages and update cache
+  apt: 
+  update_cache: yes
+- name: Install essential base packages
+  apt:
+    name: ['git', 'curl', 'unzip', 'jq', 'python3-pip']
+    state: present
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+- name: Enable and start docker
+  systemd:
+    name: docker.io
+    state: present
+- name: Add user to docker group
+  user:
+    name: "{{ item }}"
+    groups: docker
+    append: yes
+  loop: "{{ docker_users }}"
+- name: Install Docker Compose (v2)
+  get_url:
+    url: https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: true
+  notify: Restart Docker
+- name: Install kubectl
+  when: install_kubectl
+  get_url:
+    url: https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl
+    dest: /usr/local/bin/kubectl
+    mode: '0755'
+- name: Install Terraform
+  when: install_terraform
+  shell: |
+    wget -q https://releases.hashicorp.com/terraform/1.6.6/terraform_1.6.6_linux_amd64.zip -O /tmp/terraform.zip
+    unzip -o /tmp/terraform.zip -d /usr/local/bin
+    chmod +x /usr/local/bin/terraform
+
+- name: Install Helm
+  when: install_helm
+  shell: |
+    curl -s https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
