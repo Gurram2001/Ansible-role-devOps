@@ -2,10 +2,7 @@ galaxy_info:
   role_name: devops_tools
   author: gurram_mani_karthik
   description: Ansible role to install Docker and other essential DevOps tools.
-  company: Spark Technologies (or update with your brand)
-  license: MIT
-
-  min_ansible_version: "2.9"
+  company: Self
 
   platforms:
     - name: Ubuntu
