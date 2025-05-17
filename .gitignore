@@ -1,0 +1,14 @@
+*.retry
+*.swp
+*.log
+*.pyc
+__pycache__/
+.venv/
+.cache/
+*.tar.gz
+*.zip
+ansible.cfg
+inventory
+vault_pass.txt
+.env
+
