@@ -1,38 +1,131 @@
-Role Name
-=========
 
-A brief description of the role goes here.
 
-Requirements
-------------
+### 📄 `roles/devops_tools/README.md`
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
 
-Role Variables
---------------
+# Ansible Role: DevOps Tools Setup
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+This Ansible role installs and configures essential tools required for a DevOps environment. It includes the installation of Docker, Docker Compose, Git, and other helpful command-line utilities. Optional tools like `kubectl`, `helm`, and `terraform` can also be installed based on variables.
 
-Dependencies
-------------
+---
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+## 📦 Features
 
-Example Playbook
-----------------
+- Installs Docker and enables the Docker service
+- Installs Docker Compose (v2)
+- Adds specified users to the Docker group
+- Installs commonly used CLI tools: `git`, `curl`, `jq`, `unzip`, `python3-pip`
+- Optional installation of:
+  - `kubectl` (Kubernetes CLI)
+  - `helm` (Helm CLI)
+  - `terraform` (HashiCorp IaC tool)
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+---
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+## 📁 Role Structure
 
-License
--------
+```text
+devops_tools/
+├── defaults/
+│   └── main.yml
+├── handlers/
+│   └── main.yml
+├── tasks/
+│   └── main.yml
+├── vars/
+│   └── main.yml
+└── README.md
+````
 
-BSD
+---
 
-Author Information
-------------------
+## 🚀 Requirements
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+* Ubuntu/Debian-based Linux systems
+* `sudo` privileges on target hosts
+
+---
+
+## 🔧 Role Variables
+
+You can override these variables in your playbook or inventory.
+
+| Variable            | Default      | Description                            |
+| ------------------- | ------------ | -------------------------------------- |
+| `docker_users`      | `['ubuntu']` | List of users to add to `docker` group |
+| `install_kubectl`   | `false`      | Set to `true` to install `kubectl`     |
+| `install_terraform` | `false`      | Set to `true` to install Terraform     |
+| `install_helm`      | `false`      | Set to `true` to install Helm          |
+
+---
+
+## 📝 Example Usage
+
+### Inventory
+
+**`inventory.ini`**
+
+```ini
+[dev]
+your-ec2-ip-or-hostname ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
+```
+
+### Playbook
+
+**`site.yml`**
+
+```yaml
+- name: Setup DevOps Tools
+  hosts: dev
+  become: true
+  roles:
+    - role: devops_tools
+      vars:
+        docker_users:
+          - ubuntu
+          - ansible
+        install_kubectl: true
+        install_terraform: true
+        install_helm: false
+```
+
+---
+
+## ▶️ Run It
+
+```bash
+ansible-playbook -i inventory.ini site.yml
+```
+
+---
+
+## 📌 Notes
+
+* The role is optimized for Ubuntu/Debian-based hosts. You may need to adapt it for RHEL/CentOS.
+* Docker Compose is installed manually as a binary (v2 format).
+* Tools are installed directly from official sources (e.g., GitHub, HashiCorp).
+
+---
+
+## ✅ Best Practices
+
+* Use `group_vars` or `host_vars` to manage environment-specific configs.
+* Parameterize versions of tools if you want tighter control over reproducibility.
+* Run `ansible-lint` on this role if you’re enforcing YAML or Ansible coding standards.
+
+---
+
+## 📃 License
+
+MIT License
+
+---
+
+## 🙋‍♂️ Author
+
+Gurram Mani Karthik
+
+Inspired by real-world DevOps onboarding needs.
+
+
+```
